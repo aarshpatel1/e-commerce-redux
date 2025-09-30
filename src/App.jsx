@@ -1,9 +1,19 @@
-import React from "react";
+import { BrowserRouter, Route, Routes } from "react-router";
+
+import Display from "./pages/Display";
+import AddProduct from "./pages/AddProduct";
+import Navbar from "./components/Navbar";
 
 export default function App() {
 	return (
 		<>
-			<h1>Welcome to my Ecommerce page</h1>
+			<BrowserRouter>
+				<Navbar />
+				<Routes>
+					<Route path="/" element={<Display />} />
+					<Route path="/addProduct" element={<AddProduct />} />
+				</Routes>
+			</BrowserRouter>
 		</>
 	);
 }
