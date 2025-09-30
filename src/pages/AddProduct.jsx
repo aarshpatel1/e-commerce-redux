@@ -1,21 +1,26 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router";
+import { addProduct, updateProduct } from "../features/productSlice";
 
 export default function AddProduct() {
 	const productId = useParams().id;
 	const navigate = useNavigate();
+	const dispatch = useDispatch();
 
 	const [product, setProduct] = useState({});
+	const { products } = useSelector((state) => state.products);
 
-	if (productId) {
-		const products = JSON.parse(localStorage.getItem("products") || "[]");
-		const existingProduct = products.find(
-			(p) => p.id === parseInt(productId)
-		);
-		if (existingProduct && !product.productName) {
-			setProduct(existingProduct);
+	useEffect(() => {
+		if (productId) {
+			const existingProduct = products.find(
+				(p) => p.id === parseInt(productId)
+			);
+			if (existingProduct) {
+				setProduct(existingProduct);
+			}
 		}
-	}
+	}, [productId, products]);
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;
@@ -24,27 +29,33 @@ export default function AddProduct() {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
+
 		if (productId) {
-			const products = JSON.parse(
+			const updatedProduct = { ...product, id: parseInt(productId) };
+			dispatch(updateProduct(updatedProduct));
+
+			// Update localStorage
+			const savedProducts = JSON.parse(
 				localStorage.getItem("products") || "[]"
 			);
-			const updatedProducts = products.map((p) =>
-				p.id === parseInt(productId) ? { ...product, id: p.id } : p
+			const updatedProducts = savedProducts.map((p) =>
+				p.id === parseInt(productId) ? updatedProduct : p
 			);
 			localStorage.setItem("products", JSON.stringify(updatedProducts));
-			setProduct({});
-			navigate("/");
-			return;
+		} else {
+			const newProduct = { ...product, id: Date.now() };
+			dispatch(addProduct(newProduct));
+
+			// Update localStorage
+			const savedProducts = JSON.parse(
+				localStorage.getItem("products") || "[]"
+			);
+			localStorage.setItem(
+				"products",
+				JSON.stringify([...savedProducts, newProduct])
+			);
 		}
 
-		const updatedProduct = { ...product, id: Date.now() };
-		localStorage.setItem(
-			"products",
-			JSON.stringify([
-				...JSON.parse(localStorage.getItem("products") || "[]"),
-				updatedProduct,
-			])
-		);
 		setProduct({});
 		navigate("/");
 	};
@@ -64,6 +75,7 @@ export default function AddProduct() {
 						name="productName"
 						value={product.productName || ""}
 						onChange={handleChange}
+						required
 					/>
 				</div>
 
@@ -78,6 +90,7 @@ export default function AddProduct() {
 						name="productImageUrl"
 						value={product.productImageUrl || ""}
 						onChange={handleChange}
+						required
 					/>
 					{product.productImageUrl && (
 						<img
@@ -97,8 +110,9 @@ export default function AddProduct() {
 						className="form-control"
 						id="productPrice"
 						name="productPrice"
-						value={product.productPrice || 0}
+						value={product.productPrice || ""}
 						onChange={handleChange}
+						required
 					/>
 				</div>
 				<div className="mb-3">
@@ -111,6 +125,7 @@ export default function AddProduct() {
 						className="form-control"
 						value={product.productDescription || ""}
 						onChange={handleChange}
+						required
 					></textarea>
 				</div>
 				<div className="mb-3">
@@ -123,6 +138,7 @@ export default function AddProduct() {
 						className="form-select"
 						value={product.productSize || ""}
 						onChange={handleChange}
+						required
 					>
 						<option value="">Choose the Product Size</option>
 						<option value="xl">XL</option>
@@ -140,6 +156,7 @@ export default function AddProduct() {
 						className="form-select"
 						value={product.productColor || ""}
 						onChange={handleChange}
+						required
 					>
 						<option value="">Choose the Product Color</option>
 						<option value="red">Red</option>
