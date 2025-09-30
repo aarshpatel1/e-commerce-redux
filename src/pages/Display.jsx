@@ -14,11 +14,69 @@ export default function Display() {
 		setProducts(updatedProducts);
 	};
 
+	const handleSearch = (e) => {
+		e.preventDefault();
+		const form = e.target;
+		const query = form[0].value.toLowerCase();
+		const colorFilter = form[1].value;
+		const sizeFilter = form[2].value;
+		const allProducts = JSON.parse(
+			localStorage.getItem("products") || "[]"
+		);
+		const filteredProducts = allProducts.filter((product) => {
+			const matchesQuery =
+				product.productName.toLowerCase().includes(query) ||
+				product.productDescription.toLowerCase().includes(query);
+			const matchesColor = colorFilter
+				? product.productColor === colorFilter
+				: true;
+			const matchesSize = sizeFilter
+				? product.productSize === sizeFilter
+				: true;
+			return matchesQuery && matchesColor && matchesSize;
+		});
+		setProducts(filteredProducts);
+	};
+
 	return (
 		<>
 			<h1 className="text-center my-3">Welcome to Ecommerce Website</h1>
 
-			<div className="container">
+			<div className="container" onSubmit={handleSearch}>
+				<form className="d-flex mb-4 justify-content-end" role="search">
+					<input
+						type="text"
+						className="form-control me-2 w-25"
+						placeholder="Search Products"
+						aria-label="Search"
+					/>
+					<select
+						name="filter"
+						id="filter"
+						className="form-select me-2 w-25"
+					>
+						<option value="">Choose Colors</option>
+						<option value="red">Red</option>
+						<option value="green">Green</option>
+						<option value="blue">Blue</option>
+					</select>
+
+					<select
+						name="size"
+						id="size"
+						className="form-select me-2 w-25"
+					>
+						<option value="">Choose Sizes</option>
+						<option value="xl">XL</option>
+						<option value="xxl">XXL</option>
+						<option value="xxxl">XXXL</option>
+					</select>
+
+					<button className="btn btn-outline-secondary" type="submit">
+						Search
+					</button>
+				</form>
+
 				<div className="row">
 					{products.length !== 0 &&
 						products.map((product, index) => (

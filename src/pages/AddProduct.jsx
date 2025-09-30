@@ -52,7 +52,7 @@ export default function AddProduct() {
 	return (
 		<>
 			<h1 className="text-center my-3">Add Product</h1>
-			<form className="w-50 mx-auto" onSubmit={handleSubmit}>
+			<form className="w-50 mx-auto mb-5" onSubmit={handleSubmit}>
 				<div className="mb-3">
 					<label htmlFor="productName" className="form-label">
 						Product Name
@@ -83,8 +83,8 @@ export default function AddProduct() {
 						<img
 							src={product.productImageUrl}
 							alt={product.productName || "Product"}
-                            width={300}
-                            className="mt-3 rounded"
+							width={300}
+							className="mt-3 rounded"
 						/>
 					)}
 				</div>
