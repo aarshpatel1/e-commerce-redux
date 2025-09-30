@@ -12,6 +12,14 @@ export default function App() {
 				<Routes>
 					<Route path="/" element={<Display />} />
 					<Route path="/addProduct" element={<AddProduct />} />
+					<Route path="/editProduct/:id" element={<AddProduct />} />
+					<Route path="/deleteProduct/:id" element={<Display />} />
+					<Route
+						path="*"
+						element={
+							<h1 className="text-center my-5">404 Not Found</h1>
+						}
+					/>
 				</Routes>
 			</BrowserRouter>
 		</>
