@@ -20,21 +20,37 @@ export default function Display() {
 		const query = form[0].value.toLowerCase();
 		const colorFilter = form[1].value;
 		const sizeFilter = form[2].value;
-		const allProducts = JSON.parse(
+		const order = form[3].checked ? "ascending" : "descending";
+
+		let filteredProducts = JSON.parse(
 			localStorage.getItem("products") || "[]"
 		);
-		const filteredProducts = allProducts.filter((product) => {
-			const matchesQuery =
-				product.productName.toLowerCase().includes(query) ||
-				product.productDescription.toLowerCase().includes(query);
-			const matchesColor = colorFilter
-				? product.productColor === colorFilter
-				: true;
-			const matchesSize = sizeFilter
-				? product.productSize === sizeFilter
-				: true;
-			return matchesQuery && matchesColor && matchesSize;
-		});
+
+		if (query) {
+			filteredProducts = filteredProducts.filter((product) =>
+				product.productName.toLowerCase().includes(query)
+			);
+		}
+		if (colorFilter) {
+			filteredProducts = filteredProducts.filter(
+				(product) =>
+					product.productColor.toLowerCase() ===
+					colorFilter.toLowerCase()
+			);
+		}
+		if (sizeFilter) {
+			filteredProducts = filteredProducts.filter(
+				(product) =>
+					product.productSize.toLowerCase() ===
+					sizeFilter.toLowerCase()
+			);
+		}
+		if (order === "ascending") {
+			filteredProducts.sort((a, b) => a.productPrice - b.productPrice);
+		} else {
+			filteredProducts.sort((a, b) => b.productPrice - a.productPrice);
+		}
+
 		setProducts(filteredProducts);
 	};
 
@@ -71,6 +87,38 @@ export default function Display() {
 						<option value="xxl">XXL</option>
 						<option value="xxxl">XXXL</option>
 					</select>
+
+					<div className="me-2">
+						<div className="form-check">
+							<input
+								className="form-check-input"
+								type="radio"
+								name="order"
+								id="ascending"
+							/>
+							<label
+								className="form-check-label"
+								htmlFor="ascending"
+							>
+								Ascending
+							</label>
+						</div>
+						<div className="form-check">
+							<input
+								className="form-check-input"
+								type="radio"
+								name="order"
+								id="descending"
+								defaultChecked
+							/>
+							<label
+								className="form-check-label"
+								htmlFor="descending"
+							>
+								Descending
+							</label>
+						</div>
+					</div>
 
 					<button className="btn btn-outline-secondary" type="submit">
 						Search
